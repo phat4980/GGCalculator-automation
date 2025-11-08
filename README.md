@@ -1,6 +1,6 @@
 # Google Calculator Automation Testing
 
-An Appium-based mobile automation testing project for the Google Calculator Android application. This project demonstrates automated testing of basic calculator operations using Java, TestNG, and the Page Object Model (POM) design pattern.
+An Appium-based mobile automation testing project for the Google Calculator Android application. This project demonstrates automated testing of basic calculator operations using Java, Selenium, TestNG, and the Page Object Model (POM) design pattern.
 
 ## 📋 Overview
 
