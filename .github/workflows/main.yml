@@ -1,0 +1,120 @@
+name: Appium CI/CD Test
+
+on: [push, pull_request]
+
+env:
+  JAVA_VERSION: '21'
+  JAVA_DISTRIBUTION: 'temurin'
+  MAVEN_CACHE: maven
+  ANDROID_PROFILE: Nexus 6
+  ANDROID_TARGET: google_apis
+  ANDROID_API_LEVEL: 34
+  ANDROID_ARCH: x86_64
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # --------------------------
+  # Android Tests on Emulator
+  # --------------------------
+  run-android-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    
+    steps:
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: ${{ env.MAVEN_CACHE }}
+
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+      - name: Verify APK exists
+        run: |
+          if [ ! -f "app/googleCalculator.apk" ]; then
+            echo "❌ Error: APK file not found at app/googleCalculator.apk"
+            exit 1
+          else
+            echo "✅ APK file found successfully"
+            ls -lh app/googleCalculator.apk
+          fi
+
+      - name: Run tests on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          target: ${{ env.ANDROID_TARGET }}
+          arch: ${{ env.ANDROID_ARCH }}
+          profile: ${{ env.ANDROID_PROFILE }}
+          script: |
+            echo "📁 Creating necessary directories..."
+            mkdir -p exports/logs
+            mkdir -p allure-results
+            
+            echo "📦 Installing Appium..."
+            npm install -g appium@latest
+            appium --version
+            
+            echo "🤖 Starting Appium server..."
+            appium server --port 4723 > appium.log 2>&1 &
+            APPIUM_PID=$!
+            sleep 15
+            
+            echo "📱 Installing APK on emulator..."
+            adb wait-for-device
+            adb shell input keyevent 82
+            sleep 5
+            adb install -r app/googleCalculator.apk || echo "APK may already be installed"
+            
+            echo "🧪 Running tests..."
+            mvn test || true
+            
+            echo "📊 Listing generated files..."
+            echo "Allure results:"
+            ls -la allure-results/ || echo "No allure-results directory"
+            echo "Logs:"
+            ls -la exports/logs/ || echo "No logs directory"
+            
+            echo "🛑 Stopping Appium server..."
+            kill $APPIUM_PID || true
+
+      - name: Upload Allure test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results/**
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload application logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-logs
+          path: exports/logs/**
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload Appium logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: appium-logs
+          path: appium.log
+          retention-days: 7
+          if-no-files-found: ignore
