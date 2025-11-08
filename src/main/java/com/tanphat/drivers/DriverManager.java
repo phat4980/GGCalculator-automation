@@ -12,7 +12,7 @@ import java.time.Duration;
 public class DriverManager {
     private static AppiumDriver driver;
 
-    public static AppiumDriver getDriver() {
+    public static AppiumDriver startDriver() {
         if(driver == null) {
             initDriver();
         }
@@ -27,7 +27,7 @@ public class DriverManager {
                     .setAutomationName(ConfigReader.get("automationName"))
                     .setDeviceName(ConfigReader.get("deviceName"))
                     .setPlatformVersion(ConfigReader.get("platformVersion"))
-                    .setApp(resolveAppPath(ConfigReader.get("app")))
+//                    .setApp(resolveAppPath(ConfigReader.get("app")))
                     .setAppPackage(ConfigReader.get("appPackage"))
                     .setAppActivity(ConfigReader.get("appActivity"))
                     .setNewCommandTimeout(Duration.ofSeconds(30));
@@ -49,6 +49,13 @@ public class DriverManager {
         }
 
         return file.getAbsolutePath();
+    }
+
+    public static AppiumDriver getDriver() {
+        if (driver == null) {
+            throw new IllegalStateException("Not find Appium Driver");
+        }
+        return driver;
     }
 
     public static void quitDriver() {
