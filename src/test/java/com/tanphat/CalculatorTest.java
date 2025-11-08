@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 public class CalculatorTest extends BaseTest {
     @Test(dataProvider = "basicOperations")
-    public void verifyBasicOperations(String operation, int firstNum, int secondNum, String expectedResult) {
+    public void verifyBasicOperations(int firstNum, String operation, int secondNum, String expectedResult) {
         CalculatorPage calculator = new CalculatorPage(getDriver());
         CalculatorTestSteps step = new CalculatorTestSteps(calculator);
 
@@ -29,11 +29,11 @@ public class CalculatorTest extends BaseTest {
     @DataProvider
     public Object[][] basicOperations() {
         return new Object[][]{
-                {"add", 2, 3, "5"},
-                {"subtract", 10, 4, "6"},
-                {"multiply", 3, 7, "21"},
-                {"divide", 9, 3, "3"},
-                {"percent", 200, 10, "20"}
+                {2, "add", 3, "5"},
+                {10, "subtract", 4, "6"},
+                {3, "multiply", 7, "21"},
+                {9, "divide", 3, "3"},
+                {200, "percent", 10, "20"}
         };
     }
 }
