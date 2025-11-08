@@ -2,6 +2,7 @@ package com.tanphat.pages;
 
 import com.tanphat.base.BasePage;
 import com.tanphat.locators.MainCalculatorLocators;
+import com.tanphat.utils.LogUtils;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
@@ -136,33 +137,43 @@ public class CalculatorPage extends BasePage {
         for (Character digit : num.toCharArray()) {
             switch (digit) {
                 case '0':
+                    LogUtils.info("Clicking 0 digit");
                     waitAndClick(btn0);
                     break;
                 case '1':
+                    LogUtils.info("Clicking 1 digit");
                     waitAndClick(btn1);
                     break;
                 case '2':
+                    LogUtils.info("Clicking 2 digit");
                     waitAndClick(btn2);
                     break;
                 case '3':
+                    LogUtils.info("Clicking 3 digit");
                     waitAndClick(btn3);
                     break;
                 case '4':
+                    LogUtils.info("Clicking 4 digit");
                     waitAndClick(btn4);
                     break;
                 case '5':
+                    LogUtils.info("Clicking 5 digit");
                     waitAndClick(btn5);
                     break;
                 case '6':
+                    LogUtils.info("Clicking 6 digit");
                     waitAndClick(btn6);
                     break;
                 case '7':
+                    LogUtils.info("Clicking 7 digit");
                     waitAndClick(btn7);
                     break;
                 case '8':
+                    LogUtils.info("Clicking 8 digit");
                     waitAndClick(btn8);
                     break;
                 case '9':
+                    LogUtils.info("Clicking 9 digit");
                     waitAndClick(btn9);
                     break;
                 default:
@@ -172,72 +183,89 @@ public class CalculatorPage extends BasePage {
     }
 
     public void add() {
+        LogUtils.info("Clicking add button");
         waitAndClick(btnAdd);
     }
 
     public void subtract() {
+        LogUtils.info("Clicking subtract button");
         waitAndClick(btnSubtract);
     }
 
     public void multiply() {
+        LogUtils.info("Clicking multiply button");
         waitAndClick(btnMultiply);
     }
 
     public void divide() {
+        LogUtils.info("Clicking divide button");
         waitAndClick(btnDivide);
     }
 
     public void decimal() {
+        LogUtils.info("Clicking decimal button");
         waitAndClick(btnDecimal);
     }
 
     public void percent() {
+        LogUtils.info("Clicking percent button");
         waitAndClick(btnPercent);
     }
 
     public void parenthesis() {
+        LogUtils.info("Clicking parenthesis button");
         waitAndClick(btnParenthesis);
     }
 
     public void equal() {
+        LogUtils.info("Clicking equal button");
         waitAndClick(btnEqual);
     }
 
     public void delete() {
+        LogUtils.info("Clicking delete button");
         waitAndClick(btnDel);
     }
 
     public void clear() {
+        LogUtils.info("Clicking clear button");
         waitAndClick(btnClear);
     }
 
     public void square() {
+        LogUtils.info("Clicking square button");
         waitAndClick(btnSquare);
     }
 
     public void pi() {
+        LogUtils.info("Clicking Pi button");
         waitAndClick(btnPi);
     }
 
     public void power() {
+        LogUtils.info("Clicking power button");
         waitAndClick(btnPower);
     }
 
     public void factorial() {
+        LogUtils.info("Clicking factorial button");
         waitAndClick(btnFactor);
     }
 
     public String getFormula() {
+        LogUtils.info("Get formula text");
         waitForTextToBePresent(txtFormular, txtFormular.getText());
         return txtFormular.getText();
     }
 
     public String getResultReview() {
+        LogUtils.info("Get result review text");
         waitForTextToBePresent(txtResultReview, txtResultReview.getText());
         return txtResultReview.getText();
     }
 
     public String getResultFinal() {
+        LogUtils.info("Get result final text");
         waitForTextToBePresent(txtResultFinal, txtResultFinal.getText());
         return txtResultFinal.getText();
     }

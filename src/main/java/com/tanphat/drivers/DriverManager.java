@@ -1,5 +1,6 @@
 package com.tanphat.drivers;
 
+import com.tanphat.utils.LogUtils;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
@@ -14,6 +15,7 @@ public class DriverManager {
 
     public static AppiumDriver startDriver() {
         if(driver == null) {
+            LogUtils.info("Init Appium Driver");
             initDriver();
         }
         return driver;
@@ -22,6 +24,7 @@ public class DriverManager {
     private static void initDriver() {
         try {
             String appiumServer = ConfigReader.get("appiumDriver");
+            LogUtils.info("Create android server");
             UiAutomator2Options options = new UiAutomator2Options()
                     .setPlatformName(ConfigReader.get("platformName"))
                     .setAutomationName(ConfigReader.get("automationName"))
@@ -61,6 +64,7 @@ public class DriverManager {
     public static void quitDriver() {
         if (driver != null) {
             try {
+                LogUtils.info("End driver session");
                 driver.quit();
             } catch (Exception ignored) {
             }
