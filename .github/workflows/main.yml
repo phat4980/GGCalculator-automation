@@ -69,13 +69,23 @@ jobs:
             npm install -g appium@latest
             appium --version
             
+            echo "🔌 Installing UiAutomator2 driver..."
+            appium driver install uiautomator2
+            
+            echo "✅ Verifying installed drivers..."
+            appium driver list --installed
+            
             echo "🤖 Starting Appium server..."
             appium server --port 4723 > appium.log 2>&1 &
             APPIUM_PID=$!
-            sleep 15
+            
+            echo "⏳ Waiting for Appium server to be ready..."
+            sleep 20
+            echo "✅ Appium server should be ready now"
             
             echo "📱 Installing APK on emulator..."
             adb wait-for-device
+            echo "⏳ Waiting for emulator to be fully booted..."
             adb shell input keyevent 82
             sleep 5
             adb install -r app/googleCalculator.apk || echo "APK may already be installed"
