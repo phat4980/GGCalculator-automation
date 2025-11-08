@@ -6,9 +6,8 @@ env:
   JAVA_VERSION: '21'
   JAVA_DISTRIBUTION: 'temurin'
   MAVEN_CACHE: maven
-  ANDROID_PROFILE: Nexus 6
   ANDROID_TARGET: google_apis
-  ANDROID_API_LEVEL: 34
+  ANDROID_API_LEVEL: 36
   ANDROID_ARCH: x86_64
 
 defaults:
@@ -59,7 +58,6 @@ jobs:
           api-level: ${{ env.ANDROID_API_LEVEL }}
           target: ${{ env.ANDROID_TARGET }}
           arch: ${{ env.ANDROID_ARCH }}
-          profile: ${{ env.ANDROID_PROFILE }}
           script: |
             echo "📁 Creating necessary directories..."
             mkdir -p exports/logs
@@ -69,15 +67,30 @@ jobs:
             npm install -g appium@latest
             appium --version
             
+            echo "🔌 Installing UiAutomator2 driver..."
+            appium driver install uiautomator2
+            
+            echo "✅ Verifying installed drivers..."
+            appium driver list --installed
+            
             echo "🤖 Starting Appium server..."
             appium server --port 4723 > appium.log 2>&1 &
             APPIUM_PID=$!
-            sleep 15
+            
+            echo "⏳ Waiting for Appium server to be ready..."
+            sleep 20
+            echo "✅ Appium server should be ready now"
             
             echo "📱 Installing APK on emulator..."
             adb wait-for-device
+            echo "⏳ Waiting for emulator to be fully booted..."
             adb shell input keyevent 82
             sleep 5
+            
+            echo "📋 Checking Android version on emulator..."
+            adb shell getprop ro.build.version.release
+            adb shell getprop ro.build.version.sdk
+            
             adb install -r app/googleCalculator.apk || echo "APK may already be installed"
             
             echo "🧪 Running tests..."
